@@ -1,0 +1,10 @@
+{% extends 'basic/base.html' %}
+{% block content %}
+<h1>{{ form.instance.pk|yesno:'Редактировать,Создать' }} услугу</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_table }}
+    <button type="submit">Сохранить</button>
+</form>
+<a href="{% url 'services:service_list' %}">Назад к услугам</a>
+{% endblock %}

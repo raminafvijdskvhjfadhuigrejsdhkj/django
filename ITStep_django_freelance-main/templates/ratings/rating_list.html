@@ -1,0 +1,75 @@
+{% extends 'basic/base.html' %}
+
+{% block title %}Рейтинги{% endblock %}
+
+{% block content %}
+<h1>Рейтинги и отзывы</h1>
+<div class="services">
+    <div>
+        Фильтр:
+        <form action="{% url 'ratings:rating_list' %}" method="post">
+            {% csrf_token %}
+            <table class="table table-sm">  
+                <tr>
+                    <td>
+                        <input type="radio" class="btn btn-outline-primary" name="filter" value="all" checked>Все
+                    </td>
+                    <td>
+                        <input type="radio" class="btn btn-outline-primary" name="filter" value="executor">Исполнители
+                    </td>
+                    <td>
+                        <input type="radio" class="btn btn-outline-primary" name="filter" value="customer">Заказчики
+                    </td>
+                    <td>
+                        <input class="btn btn-outline-primary" type="submit" value="Применить">
+                    </td>
+                <!-- <td><a href="{% url 'ratings:rating_list' %}">Сбросить</a></td> -->
+        </form>
+        <form action="{% url 'ratings:rating_list' %}" method="get">
+            {% csrf_token %}
+            <td><input type="text" name="search" value="{{ request.GET.search }}"></td>
+            <td><input class="btm btn-outline-primary" type="submit" value="Поиск"></td>
+        </form>
+    </div>
+    <table class="table table-sm">
+        <tr>
+            <th>Заголовок</th>
+            <th>Имя пользователя</th>
+            <th>Название проекта</th>
+            <th>Рейтинг</th>
+            <th>Отзыв</th>
+        </tr>
+        {% for rating in ratings.all %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ rating.user.user.username }}  
+                {% if rating.user.user.first_name or rating.user.user.last_name %}
+                - ({{ rating.user.user.first_name }} {{ rating.user.user.last_name }})
+                {% endif %}
+            </td>
+            <td>{{ rating.order }}</td>
+            <td>{{ rating.user.rating }}</td>
+            <td>{{ rating.testimonial }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a class="btn btn-outline-primary" href="?page=1">первая &laquo;</a>
+                <a class="btn btn-outline-primary" href="?page={{ page_obj.previous_page_number }}">предыдущая &laquo;</a>
+            {% endif %}
+            
+            <span class="current">
+                Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+            </span>
+    
+            {% if page_obj.has_next %}
+                <a class="btn btn-outline-primary" href="?page={{ page_obj.next_page_number }}">следующая &raquo;</a>
+                <a class="btn btn-outline-primary" href="?page={{ page_obj.paginator.num_pages }}">последняя &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    
+</div>
+{% endblock %}
